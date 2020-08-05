@@ -1,6 +1,11 @@
 ttn-solid2d-ipynb
 =================
 
+Try
+---
+
+[![Jupyter Notebook](https://mybinder.org/badge_logo.svg)][binder]
+
 Build
 -----
 
@@ -21,3 +26,5 @@ Run
 conda activate ttn-solid2d-ipynb
 jupyter lab
 ```
+
+[binder]: https://beta.mybinder.org/v2/gh/lukas-koschmieder/ttn-solid2d-ipynb/master?filepath=ttn-solid2d.ipynb
