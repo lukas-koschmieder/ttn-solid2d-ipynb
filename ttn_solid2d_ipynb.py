@@ -16,7 +16,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 class Widget():
   def __init__(self, server):
     self.server = server
-    self.ui_rtt = FloatText(description="RTT [s]", disabled=True)
+    self.ui_request = FloatText(description="Request [s]", disabled=True)
     self.ui_predict = FloatText(description="Prediction [s]", disabled=True)
     self.ui_render = FloatText(description="Rendering  [s]", disabled=True)
     self.ui_time = FloatSlider(description="Time [s]", min=0.0, max=1.0, 
@@ -54,7 +54,7 @@ class Widget():
 
   def update(self, t):
       with self.ui_output:
-          rtt_start = time.time()
+          request_start = time.time()
           try:
             #respond = requests.get(self.server, data={ 't': t })
             respond = requests.get("{}?t={}".format(self.server, t))
@@ -62,7 +62,7 @@ class Widget():
             print('ERROR: Failed to request ttn-solid2d-server: {}'
                   .format(self.server))
             raise
-          self.ui_rtt.value = str(time.time() - rtt_start)
+          self.ui_request.value = str(time.time() - request_start)
           render_start = time.time()
           try:
             out = json.loads(respond.content)
@@ -76,7 +76,7 @@ class Widget():
         
   def display(self, verbose=False):
     if verbose:
-      display(self.ui_rtt, self.ui_predict, self.ui_render)
+      display(self.ui_request, self.ui_predict, self.ui_render)
     if not hasattr(self, 'ui'):
       self.ui = interactive(self.update, t=self.ui_time)
       self.ui_output = self.ui.children[-1]
