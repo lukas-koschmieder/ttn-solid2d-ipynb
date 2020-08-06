@@ -24,13 +24,12 @@ class Widget(Box):
     self.status = Text(description="Status", disabled=True)
     self.output = Output()
     
-    ui = (self.time,)
+    ui = (self.time, self.output, self.status)
     if verbose:
       ui = ui + (self.request, self.predict, self.render)
-    ui = ui + (self.status, self.output)
 
     super(Widget, self).__init__((VBox(ui),))
-
+    
     self.time.observe(self.update, names=['value'])
     self.update({'new':t})
 
