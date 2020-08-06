@@ -6,7 +6,7 @@ import json
 import requests
 import time
 from IPython.display import clear_output
-from ipywidgets import Box, FloatSlider, FloatText, Output, VBox
+from ipywidgets import Box, FloatSlider, FloatText, Output, Text, VBox
 import numpy as np
 from scipy.interpolate import griddata
 import matplotlib.pyplot as plt
@@ -21,12 +21,13 @@ class Widget(Box):
     self.render = FloatText(description="Rendering  [s]", disabled=True)
     self.time = FloatSlider(description="Time [s]", min=0.0, max=1.0, 
                             step=0.01, value=t, continuous_update=False)
+    self.status = Text(description="Status", disabled=True)
     self.output = Output()
     
     ui = (self.time,)
     if verbose:
       ui = ui + (self.request, self.predict, self.render)
-    ui = ui + (self.output,)
+    ui = ui + (self.status, self.output)
 
     super(Widget, self).__init__((VBox(ui),))
 
@@ -72,6 +73,7 @@ class Widget(Box):
   def update(self, t):
     with self.output:
       request_start = time.time()
+      self.status.value = "Requesting data..."
       try:
         respond = requests.get("{}?t={}".format(self.server, t['new']))
       except:
@@ -80,6 +82,7 @@ class Widget(Box):
         raise
       self.request.value = str(time.time() - request_start)
       render_start = time.time()
+      self.status.value = "Rendering data..."
       try:
         out = json.loads(respond.content)
       except:
@@ -89,3 +92,5 @@ class Widget(Box):
       self.predict.value = str(out['predict_time'])
       self.plot(out['x'], out['y'], out['u'], out['v'])
       self.render.value = str(time.time() - render_start)
+      self.status.value = 'Completed in {:.2f}s'.format(time.time() -
+                                                        request_start)
